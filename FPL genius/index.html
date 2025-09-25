@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPL_BOT</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #1f2937; 
+            --darker: #111827;
+            --light: #f3f4f6;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        .header-gradient {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 400px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: -1;
+            transform: skewY(-6deg);
+            transform-origin: top left;
+        }
+        
+        .card {
+            background: rgba(31, 41, 55, 0.8);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .profile-image {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            border: 4px solid var(--primary);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            object-fit: cover;
+        }
+        
+        .timeline {
+            position: relative;
+            padding-left: 3rem;
+            margin: 2rem 0;
+        }
+        
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 15px;
+            top: 0;
+            height: 100%;
+            width: 2px;
+            background: linear-gradient(to bottom, var(--primary), var(--secondary));
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 2.5rem;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -3rem;
+            top: 5px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--primary);
+            border: 4px solid var(--darker);
+        }
+        
+        .skill-bar {
+            height: 10px;
+            border-radius: 5px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin: 10px 0;
+        }
+        
+        .skill-fill {
+            height: 100%;
+            border-radius: 5px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+        .skill-width-97 {
+            width: 97%;
+        }
+        
+        .section-transition {
+            scroll-margin-top: 100px;
+        }
+        
+        .pulse {
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <div class="header-gradient"></div>
+    
+    <div class="container mx-auto px-4 py-8 max-w-6xl relative z-10">
+        <!-- Navigation -->
+        <nav class="flex justify-between items-center mb-12">
+            <div class="flex items-center">
+                <div class="bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl mr-3">
+                    <i class="fas fa-robot text-white text-2xl"></i>
+                </div>
+                <h1 class="text-2xl font-bold gradient-text">FPL Genius Bot</h1>
+            </div>
+            <div class="flex space-x-4">
+                <a href="#about" class="text-gray-300 hover:text-white">About Alvin</a>
+                <a href="#journey" class="text-gray-300 hover:text-white">The Journey</a>
+                <a href="#bot" class="text-gray-300 hover:text-white">The Bot</a>
+            </div>
+        </nav>
+
+        <!-- Hero Section -->
+        <section class="text-center mb-16 mt-8">
+            <h2 class="text-5xl font-bold mb-6">The Visionary Behind <span class="gradient-text">FPL Genius Bot</span></h2>
+        <div class="flex justify-center mb-8">
+    <img src="images/WhatsApp Image 2025-08-27 at 21.02.33_885ec28d.jpg" 
+         alt="Alvin Kithinji" class="profile-image">
+</div>
+            <h3 class="text-3xl font-semibold mb-2">Alvin Kithinji</h3>
+            <p class="text-xl text-gray-300 mb-8">Passionate Programmer & Web Developer</p>
+            <p class="text-lg text-gray-400 max-w-3xl mx-auto">
+                A dedicated developer whose passion for football and technology led to the creation of an AI-powered Fantasy Premier League manager that consistently outperforms human players.      
+                He is a tactical mastermind.
+            </p>
+        </section>
+
+        <!-- About Section -->
+        <section id="about" class="mb-16 section-transition">
+            <h2 class="text-3xl font-bold text-center mb-4 gradient-text">About Alvin</h2>
+            <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+                Hello, I’m Alvin Blanam, a second-year Computer Science student with a strong passion for technology, cybersecurity, and innovation. My journey in tech has been both academic and personal, from learning C, C++, and system architecture to diving deep into ethical hacking, risk management systems, and algorithmic trading.
+
+I am currently developing high-level projects such as:
+AK5.0 FPL Bot which is an automated Fantasy Premier League assistant powered by smart algorithms and subscription-based licensing.
+Pr3yProject which is a flagship AI-powered cybersecurity defense platform designed to protect under-defended nations from cyberattacks using advanced AI, deception technology, and mesh networking.
+SPECTRAGUARD which is a next-generation USB-like cybersecurity invention capable of extracting and analyzing data from air-gapped systems.
+
+Beyond coding I am also exploring business models in tech, from payment integration (M-Pesa, licensing, admin systems) to scalable SaaS solutions. My vision is to create tools that not only solve real-world problems but also set new standards in cyber defense and innovation.
+
+My Core Interests
+
+Ethical Hacking and Cybersecurity
+Artificial Intelligence and Predictive Systems
+Risk Management and Algorithmic Trading
+Full-Stack Development and System Architecture
+Building scalable tech businesses
+
+Long-Term Vision
+
+My ultimate goal is to become a national-security-grade ethical hacker and a global innovator, leading projects that merge AI, cybersecurity, and human creativity to protect and empower people worldwide.
+            </p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-code mr-2 text-blue-400"></i> Development Skills
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>Web Development</span>
+                            <span>98%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 98%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>AI & Machine Learning</span>
+                            <span>95%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 95%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>System Architecture</span>
+                            <span>96%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 96%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>Data Analysis</span>
+                            <div class="skill-fill skill-width-97"></div>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 97%"></div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="card p-6">
+                    <h3 class="text-xl font-semibold mb-4 flex items-center">
+                        <i class="fas fa-football-ball mr-2 text-green-400"></i> Football Passion
+                    </h3>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>FPL Knowledge</span>
+                            <span>99%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 99%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>Player Analysis</span>
+                            <span>97%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 97%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>Fixture Difficulty</span>
+                            <span>96%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 96%"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="flex justify-between mb-1">
+                            <span>Transfer Strategy</span>
+                            <span>98%</span>
+                        </div>
+                        <div class="skill-bar">
+                            <div class="skill-fill" style="width: 98%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Journey -->
+        <section id="journey" class="mb-16 section-transition">
+            <h2 class="text-3xl font-bold text-center mb-4 gradient-text">The Journey</h2>
+            <p class="text-gray-400 text-center mb-12 max-w-2xl mx-auto">
+              It started, as it does for many, with a simple love for football and the addictive thrill of Fantasy Premier League. For years, I was your average obsessed manager: scouring Twitter for team news, poring over expected goals (xG) stats, and taking a perverse pride in my "differential" picks that inevitably blanked.
+
+The frustration was a constant companion. I’d spend hours on a Saturday morning tinkering, only for my star defender to come off after 20 minutes with a hamstring tweak. I’d be burned by a random, unforeseen benching. I was a slave to my own biases, my favourite players, and the chaotic, unpredictable nature of the beautiful game.
+
+One Tuesday evening, after my third consecutive red arrow thanks to a missed penalty and an own goal, I had my epiphany. I was staring at my screen, at the vast tables of data on the official FPL site—points, fixtures, form, price changes. It was all there. It was just... too much. Too much for a human brain to process perfectly.
+            </p>
+            
+            <div class="card p-6">
+                <div class="timeline">
+                    <div class="timeline-item">
+                        <h4 class="font-semibold">The Frustration</h4>
+                        <p class="text-gray-400">As an avid FPL player, Alvin grew frustrated with his inconsistent performance and the time required to properly manage a team.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="font-semibold">The Insight</h4>
+                        <p class="text-gray-400">Recognizing that data-driven decisions consistently outperformed gut feelings, he saw an opportunity to apply his programming skills.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="font-semibold">The Prototype</h4>
+                        <p class="text-gray-400">Alvin developed an initial algorithm that analyzed player statistics, fixture difficulty, and form to make transfer suggestions.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="font-semibold">The Breakthrough</h4>
+                        <p class="text-gray-400">After refining his models with machine learning, the bot began consistently achieving 90+ points per gameweek.</p>
+                    </div>
+                    
+                    <div class="timeline-item">
+                        <h4 class="font-semibold">The Expansion</h4>
+                        <p class="text-gray-400">What started as a personal tool evolved into a full-fledged AI assistant capable of autonomous team management.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- The Bot -->
+        <section id="bot" class="mb-16 section-transition">
+            <h2 class="text-3xl font-bold text-center mb-4 gradient-text">The FPL Genius Bot</h2>
+            <p class="text-gray-400 text-center mb-8">The revolutionary AI that transforms FPL management</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <div class="stat-card p-5 text-center">
+                    <div class="text-4xl font-bold text-green-400 mb-2">94</div>
+                    <p class="text-gray-400">Average Points</p>
+                </div>
+                
+                <div class="stat-card p-5 text-center">
+                    <div class="text-4xl font-bold text-blue-400 mb-2">97%</div>
+                    <p class="text-gray-400">Win Rate</p>
+                </div>
+                
+                <div class="stat-card p-5 text-center">
+                    <div class="text-4xl font-bold text-purple-400 mb-2">#1</div>
+                    <p class="text-gray-400">Global Rank Potential</p>
+                </div>
+            </div>
+            
+            <div class="card p-6">
+                <h3 class="text-xl font-semibold mb-4">How the Bot Works</h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-database text-blue-400 mr-2"></i> Data Collection
+                        </h4>
+                        <p class="text-gray-400 mb-4">
+                            The bot continuously gathers data from multiple sources including player statistics, fixture difficulty ratings, injury reports, and form guides.
+                        </p>
+                        
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-brain text-green-400 mr-2"></i> AI Analysis
+                        </h4>
+                        <p class="text-gray-400 mb-4">
+                            Using machine learning algorithms, the bot identifies patterns and predicts player performance with remarkable accuracy.
+                        </p>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-cogs text-yellow-400 mr-2"></i> Decision Making
+                        </h4>
+                        <p class="text-gray-400 mb-4">
+                            The bot makes optimal decisions on transfers, captaincy, and chip usage based on data-driven insights rather than emotion.
+                        </p>
+                        
+                        <h4 class="font-semibold mb-2 flex items-center">
+                            <i class="fas fa-bolt text-purple-400 mr-2"></i> Execution
+                        </h4>
+                        <p class="text-gray-400">
+                            Once decisions are made, the bot can automatically implement them, saving you time while maximizing your point potential.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="text-center mb-16">
+            <div class="card p-8 bg-gradient-to-r from-blue-900 to-purple-900">
+                <h2 class="text-3xl font-bold mb-4">Ready to Experience the Future of FPL?</h2>
+                <p class="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+                    Join the revolution and let Alvin's FPL Genius Bot transform your Fantasy Premier League experience
+                </p>
+                <a href="login_interface.html" 
+   class="btn-primary px-8 py-4 rounded-lg text-white font-semibold text-lg flex items-center justify-center mx-auto pulse">
+   <i class="fas fa-robot mr-2"></i> Activate FPL Genius Bot
+</a>
+
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="text-center text-gray-500 text-sm pt-8 border-t border-gray-800">
+            <p>FPL Genius Bot &copy; 2025- Created by Alvin Kithinji</p>
+            <p class="mt-2">This is a conceptual demonstration. Not affiliated with Official FPL.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple animations
+        document.addEventListener('DOMContentLoaded', function() {
+            // Animate skill bars
+            const bars = document.querySelectorAll('.skill-fill');
+            bars.forEach(bar => {
+                const width = bar.style.width;
+                bar.style.width = '0';
+                setTimeout(() => {
+                    bar.style.transition = 'width 1.5s ease-in-out';
+                    bar.style.width = width;
+                }, 500);
+            });
+            
+            // Smooth scrolling for navigation
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    
+                    const targetId = this.getAttribute('href');
+                    const targetElement = document.querySelector(targetId);
+                    
+                    if (targetElement) {
+                        window.scrollTo({
+                            top: targetElement.offsetTop - 100,
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>

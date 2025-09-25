@@ -1,0 +1,729 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FPL Genius Bot - Complete Integration</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+        
+        :root {
+            --primary: #3b82f6;
+            --secondary: #10b981;
+            --accent: #f59e0b;
+            --dark: #1f2937;
+            --darker: #111827;
+            --light: #f3f4f6;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            color: var(--light);
+            min-height: 100vh;
+        }
+        
+        .header-gradient {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            height: 300px;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: -1;
+            transform: skewY(-6deg);
+            transform-origin: top left;
+        }
+        
+        .card {
+            background: rgba(31, 41, 55, 0.8);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            border-radius: 16px;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .gradient-text {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(59, 130, 246, 0.4);
+        }
+        
+        .input-field {
+            background: rgba(31, 41, 55, 0.6);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+        
+        .input-field:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3);
+        }
+        
+        .pricing-card {
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .pricing-card:hover {
+            transform: scale(1.05);
+            border: 2px solid var(--primary);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .pricing-card.featured {
+            background: linear-gradient(135deg, var(--darker), var(--dark));
+            border: 2px solid var(--primary);
+            transform: scale(1.05);
+        }
+        
+        .feature-list {
+            list-style-type: none;
+        }
+        
+        .feature-list li {
+            margin-bottom: 10px;
+            padding-left: 30px;
+            position: relative;
+        }
+        
+        .feature-list li:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--secondary);
+            font-weight: bold;
+        }
+        
+        .payment-option {
+            border: 2px solid rgba(255, 255, 255, 0.1);
+            border-radius: 12px;
+            padding: 15px;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .payment-option:hover, .payment-option.selected {
+            border-color: var(--primary);
+            background: rgba(59, 130, 246, 0.1);
+        }
+        
+        .access-code {
+            background: rgba(31, 41, 55, 0.6);
+            border: 2px dashed var(--primary);
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            font-family: monospace;
+            font-size: 1.5rem;
+            letter-spacing: 3px;
+        }
+        
+        .step-indicator {
+            width: 35px;
+            height: 35px;
+            border-radius: 50%;
+            background: rgba(59, 130, 246, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+        }
+        
+        .step-indicator.active {
+            background: var(--primary);
+        }
+        
+        .progress-bar {
+            height: 6px;
+            border-radius: 3px;
+            background: rgba(255, 255, 255, 0.1);
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            border-radius: 3px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .step {
+            display: none;
+        }
+        
+        .step.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .mpesa-logo {
+            background: linear-gradient(45deg, #ffc72c, #ffc72c, #00a650, #00a650);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            font-weight: bold;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+        
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .success-checkmark {
+            width: 80px;
+            height: 80px;
+            margin: 0 auto;
+            position: relative;
+        }
+        
+        .success-checkmark:before {
+            content: '';
+            position: absolute;
+            width: 80px;
+            height: 80px;
+            background: rgba(16, 185, 129, 0.2);
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(0.8); opacity: 0.8; }
+            50% { transform: scale(1); opacity: 0.5; }
+            100% { transform: scale(0.8); opacity: 0.8; }
+        }
+        
+        .next-btn {
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 12px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        
+        .next-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+        
+        .next-btn i {
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-gradient"></div>
+    
+    <div class="container">
+         <!-- Welcome Section with Activate Button -->
+        <section id="welcome-section" class="text-center py-16">
+            <div class="bg-gradient-to-r from-blue-500 to-green-500 p-3 rounded-xl inline-flex mb-4">
+                <i class="fas fa-robot text-white text-3xl"></i>
+            </div>
+            <h1 class="text-4xl font-bold gradient-text mb-2">FPL Genius Bot</h1>
+            <p class="text-xl text-gray-300 mb-8">AI-Powered Fantasy Premier League Management</p>
+            
+            <div class="max-w-2xl mx-auto">
+                <div class="card p-8 mb-8">
+                    <h2 class="text-2xl font-semibold mb-4">Dominate Your FPL League with AI</h2>
+                    <p class="text-gray-300 mb-6">
+                        Our advanced algorithm autonomously manages your Fantasy Premier League team, 
+                        consistently achieving 90+ points per gameweek through machine learning and real-time data analysis.
+                    </p>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-gray-800 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-green-400 mb-1">94</div>
+                            <div class="text-sm text-gray-400">Avg Points</div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-blue-400 mb-1">97%</div>
+                            <div class="text-sm text-gray-400">Win Rate</div>
+                        </div>
+                        <div class="bg-gray-800 p-4 rounded-lg text-center">
+                            <div class="text-2xl font-bold text-purple-400 mb-1">#1</div>
+                            <div class="text-sm text-gray-400">Rank Potential</div>
+                        </div>
+                    </div>
+                    
+                    <button id="activate-bot-btn" class="next-btn">
+                        Activate FPL Genius Bot <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+       
+        <!-- Payment Container (initially hidden) -->
+        <div id="payment-container" class="hidden">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold gradient-text mb-2">FPL Genius Bot</h1>
+                <p class="text-gray-300">Premium Access Portal</p>
+            </div>
+            
+            <!-- Progress Bar -->
+            <div class="card p-6 mb-6">
+                <div class="progress-bar">
+                    <div class="progress-fill" id="progress"></div>
+                </div>
+                <div class="flex justify-between">
+                    <div class="flex items-center">
+                        <div class="step-indicator active">1</div>
+                        <span>Select Plan</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="step-indicator">2</div>
+                        <span>Payment</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="step-indicator">3</div>
+                        <span>Access Code</span>
+                    </div>
+                    <div class="flex items-center">
+                        <div class="step-indicator">4</div>
+                        <span>Dashboard</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 1: Plan Selection -->
+            <div class="step active" id="step1">
+                <div class="card p-6 mb-6">
+                    <h2 class="text-2xl font-semibold text-center mb-6">Choose Your Plan</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <!-- Per Gameweek Plan -->
+                        <div class="pricing-card card p-6 text-center">
+                            <h3 class="text-xl font-semibold mb-2">Per Gameweek</h3>
+                            <div class="text-3xl font-bold gradient-text mb-4">Ksh 50</div>
+                            <p class="text-gray-400 mb-4">Pay as you play</p>
+                            <ul class="feature-list text-left mb-6">
+                                <li>AI Transfer Suggestions</li>
+                                <li>Basic Team Analysis</li>
+                                <li>Weekly Captain Picks</li>
+                                <li>Single Gameweek Access</li>
+                            </ul>
+                            <button class="next-btn w-full" onclick="selectPlan('gameweek')">
+                                Select Plan <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                        
+                        <!-- Full Season Plan (Featured) -->
+                        <div class="pricing-card featured card p-6 text-center">
+                            <div class="bg-blue-500 text-white text-sm font-bold py-1 px-3 rounded-full inline-block mb-3">
+                                BEST VALUE
+                            </div>
+                            <h3 class="text-xl font-semibold mb-2">Full Season</h3>
+                            <div class="text-3xl font-bold gradient-text mb-4">Ksh 1,500</div>
+                            <p class="text-gray-400 mb-4">All 38 Gameweeks</p>
+                            <ul class="feature-list text-left mb-6">
+                                <li>All Basic Features</li>
+                                <li>AI Captain Selection</li>
+                                <li>Advanced Analytics</li>
+                                <li>Chip Strategy Optimization</li>
+                                <li>Priority Support</li>
+                                <li>Season-long Access</li>
+                            </ul>
+                            <button class="next-btn w-full" onclick="selectPlan('season')">
+                                Select Plan <i class="fas fa-arrow-right"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 2: Payment -->
+            <div class="step" id="step2">
+                <div class="card p-6 mb-6">
+                    <h2 class="text-2xl font-semibold text-center mb-6">Complete Payment</h2>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div>
+                            <h3 class="text-lg font-semibold mb-4">Order Summary</h3>
+                            <div class="bg-gray-800 p-4 rounded-lg mb-4">
+                                <div class="flex justify-between mb-2">
+                                    <span>Plan:</span>
+                                    <span id="selected-plan" class="font-semibold">Full Season (38 Gameweeks)</span>
+                                </div>
+                                <div class="flex justify-between mb-2">
+                                    <span>Price:</span>
+                                    <span id="plan-price" class="font-semibold">Ksh 1,500</span>
+                                </div>
+                                <div class="flex justify-between pt-2 border-t border-gray-700">
+                                    <span>Total:</span>
+                                    <span id="plan-total" class="font-semibold text-lg gradient-text">Ksh 1,500</span>
+                                </div>
+                            </div>
+                            
+                            <h3 class="text-lg font-semibold mb-4">Payment Method</h3>
+                            <div class="space-y-4 mb-6">
+                                <div class="payment-option selected" onclick="selectPayment('mpesa')">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-full bg-green-500 flex items-center justify-center mr-3">
+                                            <i class="fas fa-mobile-alt text-white"></i>
+                                        </div>
+                                        <span class="mpesa-logo">M-PESA</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="payment-option" onclick="selectPayment('bank')">
+                                    <div class="flex items-center">
+                                        <div class="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center mr-3">
+                                            <i class="fas fa-university text-white"></i>
+                                        </div>
+                                        <span>Bank Transfer</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="mpesa-payment">
+                            <h3 class="text-lg font-semibold mb-4">M-PESA Payment</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Phone Number</label>
+                                    <input type="text" class="input-field w-full py-3 px-4 rounded-lg focus:outline-none" placeholder="07XX XXX XXX" value="0743104825" readonly>
+                                    <p class="text-sm text-gray-400 mt-1">Pay to: Alvin Kithinji (0743104825)</p>
+                                </div>
+                                
+                                <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                                    <h4 class="font-semibold mb-2">Payment Instructions:</h4>
+                                    <ol class="list-decimal list-inside text-sm space-y-2">
+                                        <li>Go to M-PESA on your phone</li>
+                                        <li>Select "Lipa Na M-PESA"</li>
+                                        <li>Select "Pay Bill"</li>
+                                        <li>Enter Business No: <span class="font-mono">123456</span></li>
+                                        <li>Enter Account No: <span class="font-mono">FPLGENIUS</span></li>
+                                        <li>Enter Amount: <span id="mpesa-amount" class="font-mono">1500</span></li>
+                                        <li>Enter your M-PESA PIN and confirm</li>
+                                    </ol>
+                                </div>
+                                
+                                <button class="next-btn w-full mt-4" onclick="processMpesaPayment()">
+                                    Confirm Payment <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                        
+                        <div id="bank-payment" class="hidden">
+                            <h3 class="text-lg font-semibold mb-4">Bank Transfer</h3>
+                            <div class="space-y-4">
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Bank Name</label>
+                                    <input type="text" class="input-field w-full py-3 px-4 rounded-lg focus:outline-none" value="KCB Bank" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Account Name</label>
+                                    <input type="text" class="input-field w-full py-3 px-4 rounded-lg focus:outline-none" value="Alvin Kithinji" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Account Number</label>
+                                    <input type="text" class="input-field w-full py-3 px-4 rounded-lg focus:outline-none" value="1331814545" readonly>
+                                </div>
+                                
+                                <div>
+                                    <label class="block text-gray-300 mb-2">Amount</label>
+                                    <input type="text" class="input-field w-full py-3 px-4 rounded-lg focus:outline-none" value="Ksh 1,500" readonly>
+                                </div>
+                                
+                                <div class="bg-blue-900 bg-opacity-30 p-4 rounded-lg">
+                                    <h4 class="font-semibold mb-2">Payment Instructions:</h4>
+                                    <ol class="list-decimal list-inside text-sm space-y-2">
+                                        <li>Transfer exactly <span class="font-mono">Ksh 1,500</span> to the account above</li>
+                                        <li>Use your name as the reference</li>
+                                        <li>Send proof of payment to alvin@fplgenius.com</li>
+                                        <li>Your access code will be sent within 24 hours</li>
+                                    </ol>
+                                </div>
+                                
+                                <button class="next-btn w-full mt-4" onclick="processBankPayment()">
+                                    I've Made Payment <i class="fas fa-arrow-right"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Step 3: Access Code -->
+            <div class="step" id="step3">
+                <div class="card p-6 text-center">
+                    <div class="success-checkmark mb-6">
+                        <div class="w-16 h-16 rounded-full bg-green-500 flex items-center justify-center mx-auto" style="position: relative; z-index: 2;">
+                            <i class="fas fa-check text-white text-2xl"></i>
+                        </div>
+                    </div>
+                    
+                    <h2 class="text-2xl font-semibold mb-4">Payment Successful!</h2>
+                    <p class="text-gray-400 mb-6">Thank you for your purchase. Your access code has been generated.</p>
+                    
+                    <div class="access-code mb-6">
+                        <span id="access-code">7508</span>
+                    </div>
+                    
+                    <p class="text-gray-400 mb-6">This code has been sent to your phone and will be required to access the dashboard.</p>
+                    
+                    <button class="next-btn" onclick="redirectToDashboard()">
+                        Go to Dashboard <i class="fas fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Step 4: Code Verification -->
+            <div class="step" id="step4">
+                <div class="card p-6 text-center">
+                    <h2 class="text-2xl font-semibold mb-6">Enter Access Code</h2>
+                    
+                    <p class="text-gray-400 mb-6">Please enter the access code you received after payment to continue to your dashboard.</p>
+                    
+                    <div class="max-w-md mx-auto">
+                        <div class="mb-6">
+                            <label class="block text-gray-300 mb-2">Access Code</label>
+                            <input type="text" id="code-input" class="input-field w-full py-3 px-4 rounded-lg focus:outline-none text-center tracking-widest font-mono" placeholder="Enter 7508">
+                        </div>
+                        
+                        <button class="next-btn w-full mb-4" onclick="verifyCode()">
+                            Verify Code <i class="fas fa-arrow-right"></i>
+                        </button>
+                        
+                        <p class="text-gray-400 text-sm">
+                            Lost your code? <a href="#" class="text-blue-400 hover:underline">Resend code</a>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Current step tracker
+        let currentStep = 1;
+        const totalSteps = 4;
+        let selectedPlan = '';
+        let selectedPayment = 'mpesa';
+        
+        // Fixed access code
+        const FIXED_ACCESS_CODE = '7508';
+        
+        // Update progress bar
+        function updateProgress() {
+            const progress = document.getElementById('progress');
+            const percentage = (currentStep / totalSteps) * 100;
+            progress.style.width = `${percentage}%`;
+            
+            // Update step indicators
+            document.querySelectorAll('.step-indicator').forEach((indicator, index) => {
+                if (index + 1 <= currentStep) {
+                    indicator.classList.add('active');
+                } else {
+                    indicator.classList.remove('active');
+                }
+            });
+        }
+        
+        // Navigate to next step
+        function nextStep() {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            currentStep++;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+        }
+        
+        // Navigate to previous step
+        function prevStep() {
+            document.getElementById(`step${currentStep}`).classList.remove('active');
+            currentStep--;
+            document.getElementById(`step${currentStep}`).classList.add('active');
+            updateProgress();
+        }
+        
+        // Select a plan
+        function selectPlan(plan) {
+            selectedPlan = plan;
+            let planName, planPrice, planTotal;
+            
+            if (plan === 'gameweek') {
+                planName = 'Per Gameweek';
+                planPrice = 'Ksh 50';
+                planTotal = 'Ksh 50';
+            } else {
+                planName = 'Full Season (38 Gameweeks)';
+                planPrice = 'Ksh 1,500';
+                planTotal = 'Ksh 1,500';
+            }
+            
+            document.getElementById('selected-plan').textContent = planName;
+            document.getElementById('plan-price').textContent = planPrice;
+            document.getElementById('plan-total').textContent = planTotal;
+            document.getElementById('mpesa-amount').textContent = plan === 'gameweek' ? '50' : '1500';
+            
+            nextStep();
+        }
+        
+        // Select payment method
+        function selectPayment(method) {
+            selectedPayment = method;
+            document.querySelectorAll('.payment-option').forEach(option => {
+                option.classList.remove('selected');
+            });
+            
+            event.currentTarget.classList.add('selected');
+            
+            if (method === 'mpesa') {
+                document.getElementById('mpesa-payment').classList.remove('hidden');
+                document.getElementById('bank-payment').classList.add('hidden');
+            } else {
+                document.getElementById('mpesa-payment').classList.add('hidden');
+                document.getElementById('bank-payment').classList.remove('hidden');
+            }
+        }
+        
+        // Process M-PESA payment
+        function processMpesaPayment() {
+            const button = event.currentTarget;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="loading"></span> Processing...';
+            button.disabled = true;
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                // Set the fixed access code
+                document.getElementById('access-code').textContent = FIXED_ACCESS_CODE;
+                
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                nextStep();
+            }, 1500);
+        }
+        
+        // Process bank payment
+        function processBankPayment() {
+            const button = event.currentTarget;
+            const originalText = button.innerHTML;
+            button.innerHTML = '<span class="loading"></span> Processing...';
+            button.disabled = true;
+            
+            // Simulate payment processing
+            setTimeout(() => {
+                alert('Thank you! Once we confirm your bank transfer, we will send your access code. This usually takes up to 24 hours.');
+                
+                // Set the fixed access code
+                document.getElementById('access-code').textContent = FIXED_ACCESS_CODE;
+                
+                // Reset button
+                button.innerHTML = originalText;
+                button.disabled = false;
+                
+                nextStep();
+            }, 1500);
+        }
+        
+        // Redirect to dashboard
+        function redirectToDashboard() {
+            nextStep();
+        }
+        
+        // Verify access code
+        function verifyCode() {
+            const input = document.getElementById('code-input').value;
+            
+            if (input === FIXED_ACCESS_CODE) {
+                alert('Code verified successfully! Redirecting to dashboard...');
+                // In a real implementation, you would redirect to the actual dashboard
+                window.location.href = 'dashboard.html';
+            } else {
+                alert('Invalid access code. Please try again. The correct code is 7508');
+            }
+        }
+        
+        // Activate bot button handler
+        document.getElementById('activate-bot-btn').addEventListener('click', function() {
+            // Hide welcome section and show payment container
+            document.getElementById('welcome-section').classList.add('hidden');
+            document.getElementById('payment-container').classList.remove('hidden');
+            
+            // Initialize progress bar
+            updateProgress();
+        });
+    </script>
+  <script>  // Check special code and redirect if correct
+function checkSpecialCode() {
+    const codeInput = document.getElementById('specialCode').value.trim();
+    const codeError = document.getElementById('code-error');
+    
+    if (codeInput === SPECIAL_CODE) {
+        // Code is correct - redirect to dashboard.html
+        window.location.href = "dashboard.html";
+    } else if (codeInput === "") {
+        showError(document.getElementById('specialCode'), codeError, "Please enter a code");
+    } else {
+        showError(document.getElementById('specialCode'), codeError, "Invalid code. Please try again.");
+    }
+}
+</script>
+</body>
+</html>
