@@ -45,7 +45,6 @@
         
         .card {
             background: rgba(31, 41, 55, 0.8);
-            -webkit-backdrop-filter: blur(10px);
             backdrop-filter: blur(10px);
             border-radius: 16px;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -710,20 +709,5 @@
             updateProgress();
         });
     </script>
-  <script>  // Check special code and redirect if correct
-function checkSpecialCode() {
-    const codeInput = document.getElementById('specialCode').value.trim();
-    const codeError = document.getElementById('code-error');
-    
-    if (codeInput === SPECIAL_CODE) {
-        // Code is correct - redirect to dashboard.html
-        window.location.href = "dashboard.html";
-    } else if (codeInput === "") {
-        showError(document.getElementById('specialCode'), codeError, "Please enter a code");
-    } else {
-        showError(document.getElementById('specialCode'), codeError, "Invalid code. Please try again.");
-    }
-}
-</script>
 </body>
 </html>
